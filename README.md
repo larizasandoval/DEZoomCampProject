@@ -1,7 +1,7 @@
 ## Scientific Production in Honduras Data Pipeline
 
 
-This project was developed as a final project of the [Data Engineering Zoomcamp Cohort 2026](https://github.com/DataTalksClub/data-engineering-zoomcamp) where the goal of is to apply everything we have learned in the course to build an end-to-end data pipeline.
+This project was developed as a final project of the [Data Engineering Zoomcamp Cohort 2026](https://github.com/DataTalksClub/data-engineering-zoomcamp) where the goal is to apply everything we have learned in the course to build an end-to-end data pipeline.
 
 ---
 
@@ -13,7 +13,9 @@ This project aims to build a data pipeline and transform it into actionable insi
 * **The volume of publications per year** and
 *  **The distribution by participating institucion**
 
-### Data source
+---
+
+### Data source and Data set
 The dataset comes from the [Crossref](https://www.crossref.org/) database, which is the world's largest registry of [DOIs (Digital Object Identifiers)](https://es.wikipedia.org/wiki/Identificador_de_objeto_digital). 
 Crossref provides a [REST API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/).  So about the dataset: 
 - Nature: Semi-structured data (JSON).
@@ -26,8 +28,10 @@ Fields of interest:
 * DOI: The article's unique identifier (our Primary Key).
 * Title: Article title (can be in English or Spanish).
 * Published-Print / Published-Online: Publication dates.
-* Author (Nested JSON): A nested list containing the authors' names and, their affiliations, among others
-### Architecture  & Tech Stack
+* Author (Nested JSON): A nested list containing the authors' names and, their affiliations, among others.
+
+--- 
+### Pipeline Architecture & Tech Stack
 This architecture was followed using this tools:
 ![Arquitecture adn Tech diagram](assets/infrastructure_diagram.png)
 
@@ -41,6 +45,7 @@ This architecture was followed using this tools:
 |Transformation | dbt  | Data Modeling Cleans, normalizes, and unifies tables, generete final factable for consumption   |
 |Visualization| Shiny for python | BI / Dashboarding Interactive web interface that displays insightful charts
 
+--- 
 ### Directory Project Structure
 
 ```
@@ -50,7 +55,7 @@ DEZoomCampProject
 │   └── variables.tf
 ├── 2-orchestration-kestra                      
 │   ├── flow.yml                                #Kestra flow to extract and load data into the bucket and create the raw data table
-│   ├── extract_science_production_data.py                        #Python script for extraction from api ifself
+│   ├── extract_science_production_data.py      #Python script for extraction from api ifself
 ├── 3-tranform-dbt                              #dbt transformation
 │   └── science_production
 │       ├── dbt_project.yml
@@ -70,6 +75,7 @@ DEZoomCampProject
 │       └── styles.css                          #Visual styles for applicacion
 ```
 
+---
 ### Dashboard
 
 The dashboard was developed using [**Shiny for Python**](https://shiny.posit.co/py/), a fantastic and fast tool!
@@ -84,7 +90,7 @@ We can see the following metrics:
 * Number of articles published per year.
 ![Dashboard capture](assets/Dashboard_capture.png)
 
-
+---
 ### Reproducibility
 
 ##### 1. Terraform - Infrastructure in Google Cloud
@@ -113,8 +119,10 @@ Place in  [`dbt project folder`](/3-tranform-dbt/science_production/)
 Make sure to place the Google Cloud `key` and `project` values ​​in [`profiles.yml`](/3-tranform-dbt/science_production/profiles.yml) file
 
 Run the following commands:
-`dbt debug --profiles-dir .`
+ `dbt debug --profiles-dir .`
+
 `dbt deps`
+
 `dbt run --profiles-dir .`
 
 ##### 4. Visualization - Shiny for python
@@ -126,5 +134,20 @@ Make sure you have the `.json` key to connect with BigQuery in the folder and na
 Run the following commands to run the shiny app locally:
 
 `pip install -r requirements.txt`
+
 `shiny run app.py`
 
+### Future improvements
+
+The pipeline has many opportunities for improvement, including the following:
+* At problem and objectives level:
+    - Review the query to ensure it's correct, as the data is currently insufficient.
+    - Add more Honduran institutions, such as more universities.
+    - Review the number of publications per author.
+    - Review the area of ​​study of the scientific article.
+
+* At the technical level:
+    - Automate the execution of the flow in Kestra to run at specif intervals
+    - Automate the dbt project.
+    - Review the data source, as the python script that consumes the CrossRef API can be improved.
+    - Review the Data Warehouse tables and add the author and fields dimension.
