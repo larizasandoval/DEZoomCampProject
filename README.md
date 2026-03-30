@@ -1,18 +1,18 @@
 ## Scientific Production in Honduras Data Pipeline
+
+This project was developed as a final project of the [Data Engineering Zoomcamp Cohort 2026](https://github.com/DataTalksClub/data-engineering-zoomcamp) where the goal of is to apply everything we have learned in the course to build an end-to-end data pipeline.
 ---
 
 ### Problem Statement
----
-Honduras is a small Central American country with a growing intellectual development distributed across its universities and research centers. However, this generated knowledge faces a barrier of dispersion. There is a critical disconnect between the generation of science and its monitoring. Lacking an infrastructure to centralize, standardize, and analyze these publications, the country suffers from statistical invisibility regarding articles published in scientific journals.
+
+Honduras is a small Central American country with a growing intellectual development distributed across its academic and research centers. However, this generated knowledge faces a barrier of dispersion. There is a critical disconnect between the generation of science and its monitoring. Lacking an infrastructure to centralize, standardize, and analyze these publications, the country suffers from statistical invisibility regarding articles published in scientific journals.
 
 This project aims to build a data pipeline and transform it into actionable insights, visualizing key metrics such as: 
 * **The volume of publications per year** and
-*  **their distribution by participating institucion**
-
+*  **The distribution by participating institucion**
+--
 ### Data source
 The dataset comes from the [Crossref](https://www.crossref.org/) database, which is the world's largest registry of [DOIs (Digital Object Identifiers)](https://es.wikipedia.org/wiki/Identificador_de_objeto_digital). 
-
-
 Crossref provides a [REST API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/).  So about the dataset: 
 - Nature: Semi-structured data (JSON).
 - Extraction Filter: Scientific articles where at least one author's **affiliation** is some of the following academic institutions:
@@ -20,14 +20,10 @@ Crossref provides a [REST API](https://www.crossref.org/documentation/retrieve-m
     * Universidad Pedagógica Nacional Francisco Morazán (UPNFM)
     * Escuela Agrícola Panamerica del Zamorano 
     * Universidad Tecnológica Centroamericana (UNITEC)
-
 Fields of interest:
 * DOI: The article's unique identifier (our Primary Key).
-
 * Title: Article title (can be in English or Spanish).
-
 * Published-Print / Published-Online: Publication dates.
-
 * Author (Nested JSON): A nested list containing the authors' names and, their affiliations, among others
 ### Architecture  & Tech Stack
 
@@ -51,10 +47,11 @@ DEZoomCampProject
 │   └── variables.tf
 ├── 2-orchestration-kestra                      
 │   ├── flow.yml                                #Kestra flow to extract and load data into the bucket and create the raw data table
-│   ├── script_source.py                        #Python script for extraction from api ifself
+│   ├── extract_science_production_data.py                        #Python script for extraction from api ifself
 ├── 3-tranform-dbt                              #dbt transformation
 │   └── science_production
 │       ├── dbt_project.yml
+│       ├── profiles.yml
 │       ├── models
 │       │   ├── marts
 │       │   │   └── ftc_science_production.sql  #Final tables with all articles
@@ -76,12 +73,55 @@ The dashboard was developed using [**Shiny for Python**](https://shiny.posit.co/
 
 First, a connection was established to the data source using a Service Account to communicate with BigQuery. The `fct_science_production` table was queried, where the data is clean and normalized.
 
-You can see a live demo here: [Scientific Production in Honduras](https://shiny.posit.co/py/)
-
+You can see a live demo here: [Scientific Production in Honduras](https://lariza.shinyapps.io/science_produccion_hn/)
 We can see the following metrics:
 * Number of articles whose authors are affiliated with the academic institutions of interest.
 * Number of journals in which these articles are published.
 * Articles distributed by institution.
 * Number of articles published per year.
+![Dashboard capture](assets/Dashboard_capture.png)
 
-![Arquitecture adn Tech diagram](assets/Dashboard_capture.png)
+
+### Reproducibility
+
+##### 1. Terraform - Infrastructure in Google Cloud
+Create a service account in the GCP console with Editor or Owner roles, download the .json file and reference it in your code. Or use Application Default Credentials (ADC) for working locally running `gcloud auth application-default login` command.
+
+Then run the basic commands:
+
+`terraform init`
+`terraform plan`
+`terraform apply`
+
+##### 2. Kestra - Orchestration flow
+
+With Kestra installed, either by container or locally, do the following:
+1. Upload the [`flow.yml`](/2-orchestration-kestra/flow.yml) this create the namespace `project`
+2. Define the following _key:value_ pair in namespace `project`:
+ ![kv_kestra](/assets/kv_kestra.png) they are the google cloud variables needed to connect to Google Cloud. `The ID project, the bucket name, the dataset` are most important.
+3. Then add the Python script [`extract_science_production_data.py`](/2-orchestration-kestra/extract_science_production_data.py) to the project namespace.
+![upload python script to kestra](/assets/namespaces_file_kestra.png)
+4. Execute the [`flow.yml`](/2-orchestration-kestra/flow.yml) flow.
+
+##### 3. dbt - Transformation
+
+Place in  [`dbt project folder`](/3-tranform-dbt/science_production/)
+
+Make sure to place the Google Cloud `key` and `project` values ​​in [`profiles.yml`](/3-tranform-dbt/science_production/profiles.yml) file
+
+Run the following commands:
+`dbt debug --profiles-dir .`
+`dbt deps`
+`dbt run --profiles-dir .`
+
+##### 4. Visualization - Shiny for python
+
+Place in [`4-visualization-shiny/dashboard`](/4-visualization-shiny/dashboard/) folder
+
+Make sure you have the `.json` key to connect with BigQuery in the folder and name it `credentials.json` or change the name in [`shared.py`](/4-visualization-shiny/dashboard/shared.py) file.
+
+Run the following commands to run the shiny app locally:
+
+`pip install -r requirements.txt`
+`shiny run app.py`
+

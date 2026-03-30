@@ -1,0 +1,14 @@
+science_production:
+  outputs:
+    dev:
+      dataset: science_p_raw_data
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      keyfile: '' # Path to the service account key file
+      location: us-central1
+      method: service-account
+      priority: interactive
+      project: '' # GCP project ID
+      threads: 2
+      type: bigquery
+  target: dev
