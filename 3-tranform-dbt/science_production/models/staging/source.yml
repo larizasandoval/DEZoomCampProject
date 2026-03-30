@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: science_production_raw_data
+    database: project-0f0167b9-0302-4715-840
+    schema: science_p_raw_data
+    tables:
+      - name: raw_science_production # La tabla que ya tienes con 343 columnas

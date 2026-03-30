@@ -1,0 +1,7 @@
+faicons
+shiny
+seaborn
+pandas
+pandas-gbq
+matplotlib  
+google
