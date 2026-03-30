@@ -1,6 +1,8 @@
 ## Scientific Production in Honduras Data Pipeline
 
+
 This project was developed as a final project of the [Data Engineering Zoomcamp Cohort 2026](https://github.com/DataTalksClub/data-engineering-zoomcamp) where the goal of is to apply everything we have learned in the course to build an end-to-end data pipeline.
+
 ---
 
 ### Problem Statement
@@ -10,7 +12,7 @@ Honduras is a small Central American country with a growing intellectual develop
 This project aims to build a data pipeline and transform it into actionable insights, visualizing key metrics such as: 
 * **The volume of publications per year** and
 *  **The distribution by participating institucion**
---
+
 ### Data source
 The dataset comes from the [Crossref](https://www.crossref.org/) database, which is the world's largest registry of [DOIs (Digital Object Identifiers)](https://es.wikipedia.org/wiki/Identificador_de_objeto_digital). 
 Crossref provides a [REST API](https://www.crossref.org/documentation/retrieve-metadata/rest-api/).  So about the dataset: 
@@ -26,7 +28,7 @@ Fields of interest:
 * Published-Print / Published-Online: Publication dates.
 * Author (Nested JSON): A nested list containing the authors' names and, their affiliations, among others
 ### Architecture  & Tech Stack
-
+This architecture was followed using this tools:
 ![Arquitecture adn Tech diagram](assets/infrastructure_diagram.png)
 
 | Layer         |      Tool     |  Role |
@@ -40,6 +42,7 @@ Fields of interest:
 |Visualization| Shiny for python | BI / Dashboarding Interactive web interface that displays insightful charts
 
 ### Directory Project Structure
+
 ```
 DEZoomCampProject
 ├── 1-infra-terraform                           #Cloud infrastructure
