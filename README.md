@@ -137,6 +137,8 @@ Run the following commands to run the shiny app locally:
 
 `shiny run app.py`
 
+---
+
 ### Future improvements
 
 The pipeline has many opportunities for improvement, including the following:
@@ -146,7 +148,7 @@ The pipeline has many opportunities for improvement, including the following:
     - Review the number of publications per author.
     - Review the area of ​​study of the scientific article.
 
-* At the technical level:
+* At technical level:
     - Automate the execution of the flow in Kestra to run at specif intervals
     - Automate the dbt project.
     - Review the data source, as the python script that consumes the CrossRef API can be improved.
