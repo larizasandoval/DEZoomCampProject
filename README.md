@@ -93,6 +93,8 @@ We can see the following metrics:
 ---
 ### Reproducibility
 
+This project can be reproduce following this steps
+
 ##### 1. Terraform - Infrastructure in Google Cloud
 Create a service account in the GCP console with Editor or Owner roles, download the .json file and reference it in your code. Or use Application Default Credentials (ADC) for working locally running `gcloud auth application-default login` command.
 

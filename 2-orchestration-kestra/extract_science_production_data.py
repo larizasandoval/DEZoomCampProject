@@ -66,6 +66,7 @@ def extraer_datos_crossref(query_url, max_total=5000):
     return resultados_crudos
 
 # --- EJECUCIÓN ---
+
 mapeo_claves = [
     "Universidad Nacional Autónoma de Honduras",
     "Zamorano",
@@ -73,12 +74,30 @@ mapeo_claves = [
     "Universidad Tecnológica Centroamericana"
 ]
 
-mi_query = " OR ".join([f'"{k}"' for k in mapeo_claves])
-data_final = extraer_datos_crossref(mi_query, max_total=50000)
+nombre_archivo = "science_production.jsonl"
+total_global = 0
 
-# GUARDAR COMO JSONL (Ideal para BigQuery/Kestra)
-if data_final:
-    with open("science_production.jsonl", "w", encoding="utf-8") as f:
-        for entrada in data_final:
-            f.write(json.dumps(entrada) + "\n")
-    print(f"¡Listo! Archivo 'science_production.jsonl' generado con {len(data_final)} registros.")
+# Limpiamos el archivo al inicio por si vas a ejecutar el script varias veces
+with open(nombre_archivo, "w", encoding="utf-8") as f:
+    pass 
+
+for institucion in mapeo_claves:
+    print(f"\n--- Procesando: {institucion} ---")
+    
+    # Llamamos a tu función tal cual la tienes
+    data_institucion = extraer_datos_crossref(institucion, max_total=5000)
+    
+    if data_institucion:
+        # Guardamos los resultados de ESTA institución en el archivo (modo 'a' de append)
+        with open(nombre_archivo, "a", encoding="utf-8") as f:
+            for entrada in data_institucion:
+                # Agregamos un campo extra para saber de qué búsqueda vino, 
+                # útil si luego vas a filtrar en BigQuery
+                entrada["query_origen"] = institucion 
+                f.write(json.dumps(entrada) + "\n")
+        
+        total_global += len(data_institucion)
+        print(f"Completado {institucion}. Registros añadidos: {len(data_institucion)}")
+
+print(f"\n--- PROCESO FINALIZADO ---")
+print(f"Archivo '{nombre_archivo}' generado con un total de {total_global} registros.")
